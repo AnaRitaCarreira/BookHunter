@@ -5,6 +5,7 @@ from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 import re
 import time
+import chromedriver_autoinstaller
 
 
 def search_kobo_ebooks(query, is_isbn=False):
@@ -12,18 +13,22 @@ def search_kobo_ebooks(query, is_isbn=False):
         query = query.replace("-", "").strip()
     query_lower = query.lower()
     # Caminho para o navegador Brave e o ChromeDriver
+    chromedriver_autoinstaller.install()
+
     chrome_path = "/usr/bin/google-chrome-stable"
-    chromedriver_path = "/usr/local/bin/chromedriver"
-    # Configurações do Selenium
+
     options = Options()
     options.binary_location = chrome_path
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
-    options.add_argument("--headless")  # Remova esta linha se quiser ver o navegador
+    options.add_argument("--headless=new")  # Usar modo headless moderno
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
 
-    service = Service(executable_path=chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
+    # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
+    driver = webdriver.Chrome(options=options)
+
 
     # Monta a URL de busca
     url = f"https://www.kobo.com/pt/pt/search?query={query.replace(' ', '+')}&fclanguages=pt&pagenumber=1&fcmedia=Book"
@@ -109,17 +114,22 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
 
+    chromedriver_autoinstaller.install()
+
     chrome_path = "/usr/bin/google-chrome-stable"
-    chromedriver_path = "/usr/local/bin/chromedriver"
+
     options = Options()
     options.binary_location = chrome_path
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
-    options.add_argument("--headless")
+    options.add_argument("--headless=new")  # Usar modo headless moderno
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
 
-    service = Service(executable_path=chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
+    # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
+    driver = webdriver.Chrome(options=options)
+
 
     try:
         driver.get(url)

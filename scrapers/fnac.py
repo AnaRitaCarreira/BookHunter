@@ -6,24 +6,28 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException,
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import time
+import chromedriver_autoinstaller
 
 def search_fnac(query, is_isbn=False):
     if is_isbn:
         query = query.replace("-", "").strip()
 
+    chromedriver_autoinstaller.install()
+
     chrome_path = "/usr/bin/google-chrome-stable"
-    chromedriver_path = "/usr/local/bin/chromedriver"
+
     options = Options()
     options.binary_location = chrome_path
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
-    options.add_argument("--headless")
+    options.add_argument("--headless=new")  # Usar modo headless moderno
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
-    options.add_argument('--ignore-certificate-errors')
-    options.add_argument('--allow-insecure-localhost')
 
-    service = Service(executable_path=chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
+    # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
+    driver = webdriver.Chrome(options=options)
+
 
     url = f"https://www.fnac.pt/SearchResult/ResultList.aspx??SCat=2!1&SDM=list&Search={query.replace(' ', '+')}&sft=1"
     print("Abrindo URL:", url)
@@ -101,17 +105,22 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
 
+    chromedriver_autoinstaller.install()
+
     chrome_path = "/usr/bin/google-chrome-stable"
-    chromedriver_path = "/usr/local/bin/chromedriver"
+
     options = Options()
     options.binary_location = chrome_path
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
-    options.add_argument("--headless")
+    options.add_argument("--headless=new")  # Usar modo headless moderno
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
 
-    service = Service(executable_path=chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
+    # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
+    driver = webdriver.Chrome(options=options)
+
 
     try:
         driver.get(url)

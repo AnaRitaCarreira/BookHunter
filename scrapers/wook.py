@@ -3,7 +3,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
-
+import chromedriver_autoinstaller
 from urllib.parse import quote
 import time
 
@@ -13,17 +13,21 @@ def search_wook(query, is_isbn=False):
     if is_isbn:
         query = query.replace("-", "").strip()
 
+    chromedriver_autoinstaller.install()
+
     chrome_path = "/usr/bin/google-chrome-stable"
-    chromedriver_path = "/usr/local/bin/chromedriver"
+
     options = Options()
     options.binary_location = chrome_path
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
-    options.add_argument("--headless")
+    options.add_argument("--headless=new")  # Usar modo headless moderno
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
 
-    service = Service(executable_path=chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
+    # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
+    driver = webdriver.Chrome(options=options)
 
     # A URL de busca é a mesma para q e isbn no wook, então apenas usa o query direto
     url = f"https://www.wook.pt/pesquisa?keyword={quote(query)}&search-disposition=list&select%5Btip_art_web_id%5D=122&page=1&sort=ranking_orderSort%7Casc&interval%5Bpre_ven_cap%5D="
@@ -92,17 +96,22 @@ def search_wook_ebooks(query, is_isbn=False):
     if is_isbn:
         query = query.replace("-", "").strip()
 
+    chromedriver_autoinstaller.install()
+
     chrome_path = "/usr/bin/google-chrome-stable"
-    chromedriver_path = "/usr/local/bin/chromedriver"
+
     options = Options()
     options.binary_location = chrome_path
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
-    options.add_argument("--headless")
+    options.add_argument("--headless=new")  # Usar modo headless moderno
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
 
-    service = Service(executable_path=chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
+    # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
+    driver = webdriver.Chrome(options=options)
+
 
     # A URL de busca é a mesma para q e isbn no wook, então apenas usa o query direto
     url = f"https://www.wook.pt/pesquisa?keyword={quote(query)}&search-disposition=list&select[tip_art_web_id]=619&page=1&sort=ranking_orderSort|asc&interval[pre_ven_cap]="
@@ -167,17 +176,22 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
 
+    chromedriver_autoinstaller.install()
+
     chrome_path = "/usr/bin/google-chrome-stable"
-    chromedriver_path = "/usr/local/bin/chromedriver"
+
     options = Options()
     options.binary_location = chrome_path
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
-    options.add_argument("--headless")
+    options.add_argument("--headless=new")  # Usar modo headless moderno
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
 
-    service = Service(executable_path=chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
+    # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
+    driver = webdriver.Chrome(options=options)
+
 
     try:
         driver.get(url)
