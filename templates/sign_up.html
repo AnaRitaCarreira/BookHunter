@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Criar Conta - BookHunter</title>
+    <link rel="icon" href="/static/logo.ico" type="image/x-icon">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2a5d9a, #c6d8f2);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .signup-container {
+            background: #c6d8f2;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+        }
+
+        .form-header {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+
+        .header-button {
+            padding: 10px 20px;
+            background-color: transparent;
+            color: #2a5d9a;
+            border: 2px solid transparent;
+            border-radius: 8px;
+            font-weight: bold;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .header-button:hover {
+            background-color: #ffffff33;
+            border-color: #2a5d9a;
+        }
+
+        .header-button.active {
+            background-color: #2a5d9a;
+            color: white;
+            border: 2px solid #2a5d9a;
+        }
+
+        form input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        form input:focus {
+            border-color: #4e73df;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(78, 115, 223, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #2a5d9a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #1f4c80;
+        }
+
+        .copyrights {
+            text-align: center;
+            padding-top: 15px;
+            font-size: 0.9rem;
+            color: white;
+        }
+
+        .flash {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .flash.success {
+            background-color: #ddffdd;
+            color: #228B22;
+        }
+        .flash.error {
+            background-color: #ffdddd;
+            color: #B22222;
+        }        
+
+    </style>
+</head>
+<body>
+
+    <div class="signup-container">
+        <div class="form-header">
+            <a class="header-button" href="/login.html">Login</a>
+            <a class="header-button active" href="#">Criar Conta</a>
+        </div>
+        <div id="signup-message"></div>
+
+        <form method="post" id="signup-form" action="/auth/register">
+            <label for="name">Nome:</label><br>
+            <input type="text" id="name" name="name" required><br>
+
+            <label for="email">Email:</label><br>
+            <input type="email" id="email" name="email" required><br>
+
+            <label for="password">Palavra-passe:</label><br>
+            <input type="password" id="password" name="password" required><br>
+
+            <button type="submit">Criar Conta</button>
+        </form>
+    </div>
+
+    <div class="copyrights">
+        ©Copyright BookHunter 2025. Todos os direitos reservados.
+    </div>
+
+</body>
+</html>
+
+<script>
+document.getElementById("signup-form").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData(form);
+    const email = formData.get("email");
+    const password = formData.get("password");
+    const response = await fetch("/auth/register", {
+        method: "POST",
+        body: formData
+    });
+    const messageBox = document.getElementById("signup-message");
+
+    // Validação simples de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        messageBox.innerText = "Por favor, insira um email válido.";
+        messageBox.style.color = "red";
+        return;
+    }
+
+        // Validação de senha
+    if (password.length < 6) {
+        messageBox.innerText = "A senha deve ter no mínimo 6 caracteres.";
+        messageBox.style.color = "red";
+        return;
+    }
+
+    if (response.ok) {
+        messageBox.innerText = "Conta criada com sucesso! Redirecionando...";
+        messageBox.style.color = "green";
+        setTimeout(() => {
+            window.location.href = "/login.html";
+        }, 1500);
+    } else {
+        const data = await response.json();
+        messageBox.innerText = data.detail || "Erro ao criar conta.";
+        messageBox.style.color = "red";
+    }
+});
+
+
+</script>
