@@ -6,7 +6,7 @@ import time
 
 def search_fnac(query):
     brave_path = r"C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
-    chromedriver_path = r"./chromedriver-win64/chromedriver.exe"
+    chromedriver_path = r"./chromedriver-linux64/chromedriver"
 
     options = Options()
     options.binary_location = brave_path

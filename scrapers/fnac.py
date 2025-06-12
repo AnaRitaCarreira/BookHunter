@@ -12,7 +12,7 @@ def search_fnac(query, is_isbn=False):
         query = query.replace("-", "").strip()
 
     brave_path = r"C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
-    chromedriver_path = r"./chromedriver-win64/chromedriver.exe"
+    chromedriver_path = r"./chromedriver-linux64/chromedriver"
 
     options = Options()
     options.binary_location = brave_path
@@ -103,7 +103,7 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.common.by import By
 
     brave_path = r"C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
-    chromedriver_path = r"./chromedriver-win64/chromedriver.exe"
+    chromedriver_path = r"./chromedriver-linux64/chromedriver"
 
     options = Options()
     options.binary_location = brave_path

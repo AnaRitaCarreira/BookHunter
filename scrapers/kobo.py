@@ -13,7 +13,7 @@ def search_kobo_ebooks(query, is_isbn=False):
     query_lower = query.lower()
     # Caminho para o navegador Brave e o ChromeDriver
     brave_path = r"C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
-    chromedriver_path = r"./chromedriver-win64/chromedriver.exe"
+    chromedriver_path = r"./chromedriver-linux64/chromedriver"
 
     # Configurações do Selenium
     options = Options()
@@ -111,7 +111,7 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.common.by import By
 
     brave_path = r"C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
-    chromedriver_path = r"./chromedriver-win64/chromedriver.exe"
+    chromedriver_path = r"./chromedriver-linux64/chromedriver"
 
     options = Options()
     options.binary_location = brave_path
