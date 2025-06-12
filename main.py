@@ -5,7 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from base import Base
 from database import engine
 from scheduler import start_scheduler
-
+import uvicorn
 from api.routes import (
     user_dashboard,
     search,
@@ -75,3 +75,7 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 10000))  # Render define PORT
+    uvicorn.run("main:app", host="0.0.0.0", port=port, reload=False)
