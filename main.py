@@ -18,7 +18,7 @@ from auth_funcs import fastapi_users, auth_backend
 from schemas import UserCreate, UserRead, UserUpdate
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.responses import RedirectResponse
-
+import subprocess
 class RedirectUnauthorizedMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
         response = await call_next(request)
@@ -29,6 +29,14 @@ class RedirectUnauthorizedMiddleware(BaseHTTPMiddleware):
 app = FastAPI()
 app.add_middleware(RedirectUnauthorizedMiddleware)
 
+def check_chrome():
+    try:
+        result = subprocess.run(["which", "google-chrome-stable"], capture_output=True, text=True)
+        print("Google Chrome path:", result.stdout.strip())
+    except Exception as e:
+        print("Erro ao verificar Chrome:", e)
+
+check_chrome()
 import os
 print(">>> Existe o Chrome em /usr/bin/google-chrome-stable?", os.path.exists("/usr/bin/google-chrome-stable"))
 print(">>> Conteúdo de /usr/bin:")
