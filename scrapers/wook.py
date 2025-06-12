@@ -25,6 +25,8 @@ def search_wook(query, is_isbn=False):
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
+    options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
+
 
     driver = webdriver.Chrome(options=options)    
     # A URL de busca é a mesma para q e isbn no wook, então apenas usa o query direto
@@ -103,6 +105,8 @@ def search_wook_ebooks(query, is_isbn=False):
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
+    options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
+
 
     driver = webdriver.Chrome(options=options)    
     # A URL de busca é a mesma para q e isbn no wook, então apenas usa o query direto
@@ -177,6 +181,7 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
+    options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
 
     driver = webdriver.Chrome(options=options)    
     try:
