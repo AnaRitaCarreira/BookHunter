@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="icon" href="/static/logo.ico" type="image/x-icon">
+  <title>BookHunter</title>
+    <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #c6d8f2;
+      margin: 0; padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      object-fit: cover;
+      background-repeat: no-repeat;
+      background-size: cover;
+      margin: 0 auto;
+      overflow-x: hidden;
+    }
+
+    header {
+      width: 100%;
+      display: flex;
+      background:#d2dae3; 
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      padding: 0;
+      margin: 0;
+    }
+
+    header img {
+      width: 100%;
+      height: auto;         /* mantém a proporção original */
+      object-fit: contain;  /* mostra a imagem completa sem cortar */
+      max-height: 300px;    /* ajusta para não ocupar muito da tela */
+    }
+
+    .navbar {
+      background-color: #2a5d9a;
+      position: sticky;
+      position: -webkit-sticky;
+      z-index: 1;
+      width: 100%;
+    }
+
+
+    .navbar-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1024px;
+      margin: 0 auto;
+      padding: 0.5rem 1rem;
+    }
+
+
+    .navbar-links {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .navbar-links a {
+      color: white;
+      text-decoration: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+    }
+
+    .navbar-links a:hover {
+      background-color: #b3cbe6;
+      color: black;
+    }
+
+    .navbar-links a.active {
+      background-color: rgb(144, 177, 220);
+      color: black;
+    }
+
+    /* Right-aligned link */
+    .navbar a.right {
+      float: right;
+    }
+    /* Hamburger hidden on desktop */
+    .hamburger {
+      display: none;
+      font-size: 1.5rem;
+      background: none;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+
+
+    main {
+      flex-grow: 1;
+      margin: 2rem auto 3rem;
+      padding: 0 1rem;
+      width: 100%;
+    }
+
+    form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgb(0 0 0 / 0.1);
+      border-radius: 6px;
+      overflow: hidden;
+      max-width: 900px;
+      margin: 1.5rem auto;
+      gap: 0.5rem; 
+      background-color: #c6daf1;
+      padding: 1rem;
+      border-radius: 8px;
+    }
+
+    input[type="text"] {
+      flex: 1 1 250px;
+      padding: 1rem 1.2rem;
+      font-size: 1rem;
+      border: none;
+      outline: none;
+      min-width: 0;
+    }
+
+    button {
+      padding: 0 1.8rem;
+      font-size: 1rem;
+      background: #76a3d7;
+      color:white;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2a5d9a;
+    }
+    #results {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      padding: 0 1rem;
+    }
+    .book-card-wrapper {
+      position: relative;
+    }
+    .book-card {
+      background: #c6daf1;
+      padding: 1rem 1rem 1.4rem;
+      border-radius: 8px;
+      box-shadow: 0 3px 8px rgb(0 0 0 / 0.12);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+    .book-card:hover {
+      transform: translateY(-5px);
+    }
+    .book-card img.book-cover,
+    .book-item img {
+      width: 120px;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .book-card h3 {
+      margin: 0.25rem 0 0.6rem;
+      font-size: 1.15rem;
+      color: #222;
+    }
+    .book-card p.price {
+      margin: 0;
+      font-weight: 700;
+      color: #266488;
+      font-size: 1.25rem;
+    }
+    .badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #27ae60;
+      color: white;
+      font-weight: bold;
+      font-size: 0.8rem;
+      padding: 4px 8px;
+      border-radius: 4px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      z-index: 2;
+    }
+    .store-logo {
+      width: 80px;
+      height: 30px;
+      object-fit: contain;
+      margin-top: 0.5rem;
+    }
+    #no-results {
+      text-align: center;
+      color: #8f8f8f;
+      font-size: 1.2rem;
+      margin-top: 3rem;
+    }
+    #loader {
+      border: 6px solid #f3f3f3;
+      border-top: 6px solid #357ABD;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+      margin: 2rem auto;
+      display: none;
+    }
+
+    footer {
+      background-color: #2a5d9a;
+      color: white;
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+    }
+
+    footer a{
+      color: white;
+      padding: 10px;
+      margin-top: 20px;
+      width:100%;
+      height: 40px;
+      
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 600px) {
+
+      body {
+        overflow-x: hidden; /* Garante que nada escape para o lado */
+        margin:0;
+        padding:0;
+      }
+      .navbar-container {
+        flex-wrap: wrap;
+      }
+
+      .hamburger {
+        display: block;
+      }
+
+      .navbar-links {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background-color: #2a5d9a;
+        margin-top: 0.5rem;
+      }
+
+      .navbar-links.show {
+        display: flex;
+      }
+
+      .navbar-links a {
+        padding: 1rem;
+        text-align: left;
+      }
+
+      form {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: #f0f4f9; /* tom mais suave */
+        width: 100%;
+        max-width: 360px;
+        margin: 1rem auto;
+        padding: 0.5rem;
+        box-sizing: border-box;
+        gap: 0.5rem;
+        border-radius: 8px;
+      }
+
+      input[type="text"] {
+        width: 100%;
+        font-size: 0.9rem;
+        padding: 0.4rem 0.75rem;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      button {
+        width: 100%;
+        font-size: 0.9rem;
+        padding: 0.6rem;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      header {
+        aspect-ratio: 2 / 1;
+      }
+
+      header img {
+        max-height: 180px;
+      }
+
+      .book-card img.book-cover {
+        max-width: 100px;
+        max-height: 150px;
+      }
+
+      main {
+        padding: 0 1rem;
+        box-sizing: border-box;
+      }
+
+      header {
+        aspect-ratio: 2 / 1;
+      }
+
+      header img {
+        max-height: 180px;
+        width: 100%;
+        object-fit: contain;
+      }
+
+    }
+
+
+  </style>
+</head>
+
+<script>
+async function checkLoginAndUpdateNavbar() {
+  try {
+    const res = await fetch("/users/me", {
+      credentials: "include"
+    });
+
+    const link = document.getElementById("auth-link");
+    const dashboard = document.getElementById("dashboard-link");
+
+    if (res.ok) {
+      // Usuário autenticado
+      dashboard.style.display = "inline-block";
+      dashboard.innerHTML = "Minha lista TBR";
+      dashboard.href = "/dashboard";
+
+      link.innerHTML = "<b>Logout</b>";
+      link.href = "#";
+      link.onclick = (e) => {
+        e.preventDefault();
+        logout();
+      };
+    } else {
+      // Não autenticado
+      dashboard.style.display = "none";
+
+      link.innerHTML = "<b>Login</b>";
+      link.href = "/login.html";
+      link.onclick = null;
+    }
+  } catch (e) {
+    console.error("Erro ao verificar login:", e);
+  }
+}
+</script>
+
+<body>
+
+<header>
+  <img src="/static/BookHunterBanner.png" alt="Banner BookHunter">
+</header>
+
+<nav class="navbar">
+  <div class="navbar-container">
+    <button class="hamburger" aria-label="Menu">&#9776;</button>
+    <div class="navbar-links">
+      <a id="dashboard-link" style="display: none;"></a>
+      <a href="index.html" >Pesquisar livros</a>
+      <a href="#" class="active">Pesquisar e-books</a>
+      <a href="contacts.html">Contactos</a>
+      <a href="login.html" class="right" id="auth-link"> <b>Login</b> </a>
+
+    </div>
+  </div>
+</nav>
+
+<main>
+
+  <form id="search-form" autocomplete="off">
+    <input type="text" id="search-input" name="query" placeholder="Digite título ou autor" required />
+    <button type="submit">Pesquisar e-book</button>
+  </form>
+
+  <div id="loader"></div>
+  <div id="no-results" style="display:none;">Nenhum resultado encontrado.</div>
+  <div id="results"></div>
+</main>
+
+<script>
+  const form = document.getElementById("search-form");
+  const input = document.getElementById("search-input");
+  const resultsDiv = document.getElementById("results");
+  const noResultsDiv = document.getElementById("no-results");
+  const loader = document.getElementById("loader");
+
+  const storeLogos = {
+    Wook: "/static/logos/wook-logo.png",
+    Kobo: "/static/logos/Kobo_eReader-Logo.wine.png",
+    Bertrand: "/static/logos/Logo_Bertrand.svg.png"
+  };
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const query = input.value.trim();
+    if (!query) return;
+
+    resultsDiv.innerHTML = "";
+    noResultsDiv.style.display = "none";
+    loader.style.display = "block";
+    form.querySelector("button").disabled = true;
+
+    try {
+      const response = await fetch(`/search_ebooks?q=${encodeURIComponent(query)}`);
+      if (!response.ok) throw new Error("Erro ao buscar dados");
+
+      const text = await response.text();
+      //console.log("Resposta bruta:", text);
+      let data;
+
+      try {
+        data = JSON.parse(text);
+      } catch (e) {
+        console.error("Erro ao fazer parse do JSON:", e);
+        throw e;
+      }
+
+      const books = data.results;
+
+      loader.style.display = "none";
+
+      if (!books || books.length === 0) {
+        noResultsDiv.style.display = "block";
+        return;
+      }
+
+      books.sort((a, b) => a.price - b.price);
+      const cheapest = books[0];
+
+      for (const book of books) {
+        const wrapper = document.createElement("div");
+        wrapper.className = "book-card-wrapper";
+        const card = document.createElement("div");
+        card.className = "book-card";
+
+        const logoSrc = storeLogos[book.store] || null;
+
+        card.innerHTML = `
+          <a href="${book.link}" target="_blank" rel="noopener noreferrer" title="${book.title}">
+            <img src="${book.cover}" alt="Capa do livro: ${book.title}" title="${book.title}" class="book-cover" loading="lazy" />
+            <h3>${book.title}</h3>  
+          </a>
+          <p class="price">${book.priceStr}</p>
+          ${logoSrc ? `<img src="${logoSrc}" alt="${book.store} logo" class="store-logo">` : `<p>${book.store}</p>`}
+        `;
+
+        const button = document.createElement("button");
+        
+        // Verificar se o livro já está na TBR
+        try {
+          const checkRes = await fetch(`/track/check?title=${encodeURIComponent(book.title)}&author=${encodeURIComponent(book.author)}&store=${encodeURIComponent(book.store)}&store_url=${encodeURIComponent(book.link)}`);
+          const checkData = await checkRes.json();
+
+          let isTracked = checkData.tracked;
+
+          button.textContent = isTracked ? "✅ Livro na TBR (Remover)" : "➕ Adicionar à TBR";
+
+          button.onclick = async () => {
+            if (isTracked) {
+              const success = await removeFromTBR(book.title, book.author, book.store, book.link);
+              if (success) {
+                button.textContent = "➕ Adicionar à TBR";
+                isTracked = false;
+              }
+            } else {
+              const success = await addToTBR(book.title, book.author, book.cover, book.priceStr, book.store, book.link, book.isbn);
+              if (success) {
+                button.textContent = "✅ Livro na TBR (Remover)";
+                isTracked = true;
+              }
+            }
+          };
+
+
+        } catch (e) {
+          console.error("Erro ao verificar TBR:", e);
+        }
+
+        card.appendChild(button); 
+
+        if (book === cheapest) {
+          const badge = document.createElement("div");
+          badge.className = "badge";
+          badge.textContent = "Mais barato!";
+          wrapper.appendChild(badge);
+        }
+
+        wrapper.appendChild(card);
+        resultsDiv.appendChild(wrapper);
+        form.querySelector("button").disabled = false;
+      }
+    } catch (error) {
+      loader.style.display = "none";
+      console.error("Erro ao buscar livros:", error);
+      noResultsDiv.textContent = "Ocorreu um erro ao buscar os livros. Tente novamente.";
+      noResultsDiv.style.display = "block";
+      form.querySelector("button").disabled = false;
+    }
+  });
+</script>
+
+<footer>        
+    <a> ©Copyright BookHunter 2025. Todos os direitos reservados. </a>
+</footer>
+
+</body>
+</html>
+
+<script>
+  const hamburger = document.querySelector(".hamburger");
+  const links = document.querySelector(".navbar-links");
+
+  hamburger.addEventListener("click", () => {
+    links.classList.toggle("show");
+  });
+
+  window.addEventListener("DOMContentLoaded", () => {
+    checkLoginAndUpdateNavbar();
+
+    const params = new URLSearchParams(window.location.search);
+    const query = params.get("q");
+
+    if (query) {
+      const input = document.getElementById("search-input");
+      if (input) {
+        input.value = query;
+        document.getElementById("search-form").dispatchEvent(new Event("submit"));
+      }
+    }
+  });
+</script>
+
+<script>
+
+async function logout() {
+    const res = await fetch("/auth/logout", {
+        method: "POST",
+        credentials: "include"
+    });
+
+    if (res.ok) {
+        window.location.replace("/index.html"); // Substitui no histórico
+    } else {
+        alert("Erro ao tentar sair.");
+    }
+}
+
+async function addToTBR(title, author, cover, priceStr, store, link, isbn) {
+  const user = await getCurrentUser();
+  if (!user) {
+    window.location.href = "/login.html";
+    return false;
+  }
+
+  const payload = {
+    title: title || "",
+    author: author || "",
+    cover: cover || "",
+    price: priceStr ? parseFloat(priceStr.replace(",", ".")) : null,
+    store: store || "",
+    store_url: link || "",
+    isbn: isbn || "",
+    user_email: user.email,
+    is_ebook: true
+  };
+
+  try {
+    const res = await fetch("/track", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      credentials: "include",
+      body: JSON.stringify(payload)
+    });
+
+    if (!res.ok) throw new Error("Erro ao adicionar à TBR");
+
+    const data = await res.json();
+    alert("📚 Livro adicionado à TBR com sucesso!");
+    return true;
+
+  } catch (err) {
+    alert("⚠️ Erro ao adicionar livro à TBR.");
+    console.error(err);
+    return false;
+  }
+}
+
+
+
+async function checkLogin() {
+  try {
+    const res = await fetch("/users/me", {
+      credentials: "include"
+    });
+    if (res.status === 200) return true;
+    return false;
+  } catch (e) {
+    return false;
+  }
+}
+
+async function getCurrentUser() {
+  const res = await fetch("/users/me", {
+    credentials: "include"
+  });
+  if (!res.ok) return null;
+  return await res.json();
+}
+
+async function removeFromTBR(title, author, store, store_url) {
+  try {
+    const res = await fetch(`/track/remove`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, author, store, store_url }),
+      credentials: "include"
+    });
+
+    if (res.ok) {
+      return true;
+    } else {
+      alert("Erro ao remover livro da TBR.");
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao remover livro:", error);
+    return false;
+  }
+}
+
+
+
+function comparePrices(title) {
+  window.location.href = `/search_ebooks?q=${encodeURIComponent(title)}`;
+}
+
+
+</script>
