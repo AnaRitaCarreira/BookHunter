@@ -1,7 +1,5 @@
-pip install fastapi uvicorn[standard] httpx beautifulsoup4 httpx selenium
-pip install fastapi[all] fastapi-users[sqlalchemy] python-jose[cryptography] passlib[bcrypt] email-validator
-pip install celery[redis]
-
+httpx
+selenium
 fastapi
 uvicorn
 sqlalchemy
@@ -14,3 +12,4 @@ alembic
 celery[redis]
 python-dotenv
 aiosqlite
+
