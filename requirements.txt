@@ -14,4 +14,7 @@ python-dotenv
 aiosqlite
 apscheduler
 itsdangerous
-
+jinja2
+aiosmtplib
+alembic==1.16.1
+beautifulsoup4==4.13.4
