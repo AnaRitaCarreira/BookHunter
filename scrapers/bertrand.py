@@ -7,6 +7,8 @@ import chromedriver_autoinstaller
 from urllib.parse import quote
 import time
 import os
+chromedriver_autoinstaller.install()  # isso baixa e coloca o chromedriver na PATH automaticamente
+
 
 def search_bertrand(query, is_isbn=False):
     # Se for ISBN, pode tratar para evitar espaços etc.
@@ -15,7 +17,6 @@ def search_bertrand(query, is_isbn=False):
 
     # Instala automaticamente o chromedriver compatível com o Chrome
     chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/google-chrome-stable")
-    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
     options.binary_location = chrome_path
@@ -25,8 +26,7 @@ def search_bertrand(query, is_isbn=False):
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
 
-    service = Service(executable_path=chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Chrome(options=options)    
     url = f"https://www.bertrand.pt/pesquisa/{query.replace(' ', '+')}/+/+/+/eyJ0aXBfYXJ0X3dlYl9pZCI6eyJpZCI6IjEyMiIsIm5hbWUiOiJMaXZybyJ9fQ"
     print("Abrindo URL:", url)
     driver.get(url)
@@ -85,7 +85,6 @@ def search_bertrand_ebooks(query, is_isbn=False):
         query = query.replace("-", "").strip()
 
     chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
-    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
     options.binary_location = chrome_path
@@ -95,9 +94,7 @@ def search_bertrand_ebooks(query, is_isbn=False):
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
 
-    service = Service(executable_path=chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
-
+    driver = webdriver.Chrome(options=options)
     url = f"https://www.bertrand.pt/pesquisa/{query.replace(' ', '+')}/+/+/+/eyJ0aXBfYXJ0X3dlYl9pZCI6eyJpZCI6IjYxOSIsIm5hbWUiOiJlQm9vayJ9fQ"
     print("Abrindo URL:", url)
     driver.get(url)
@@ -160,7 +157,6 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.common.by import By
 
     chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
-    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
     options.binary_location = chrome_path
@@ -170,8 +166,7 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
 
-    service = Service(executable_path=chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Chrome(options=options)
     try:
         driver.get(url)
 

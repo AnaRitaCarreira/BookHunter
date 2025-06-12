@@ -35,6 +35,7 @@ RUN cd $STORAGE_DIR/chrome && \
     wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
     dpkg -x google-chrome-stable_current_amd64.deb . && \
     rm google-chrome-stable_current_amd64.deb
+RUN chmod +x /opt/render/project/.render/chrome/opt/google/chrome/google-chrome
 
 # Adiciona Chrome extraído ao PATH
 ENV PATH="${PATH}:/opt/render/project/.render/chrome/opt/google/chrome"

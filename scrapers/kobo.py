@@ -8,6 +8,7 @@ import time
 import chromedriver_autoinstaller
 import os
 from selenium import webdriver
+chromedriver_autoinstaller.install()  # isso baixa e coloca o chromedriver na PATH automaticamente
 
 def search_kobo_ebooks(query, is_isbn=False):
     if is_isbn:
@@ -15,7 +16,6 @@ def search_kobo_ebooks(query, is_isbn=False):
     query_lower = query.lower()
 
     chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
-    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
     options.binary_location = chrome_path
@@ -25,8 +25,7 @@ def search_kobo_ebooks(query, is_isbn=False):
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
 
-    service = Service(executable_path=chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Chrome(options=options)
     # Monta a URL de busca
     url = f"https://www.kobo.com/pt/pt/search?query={query.replace(' ', '+')}&fclanguages=pt&pagenumber=1&fcmedia=Book"
     print("Abrindo URL:", url)
@@ -112,7 +111,6 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.common.by import By
 
     chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
-    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
     options.binary_location = chrome_path
@@ -122,8 +120,7 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
 
-    service = Service(executable_path=chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Chrome(options=options)    
 
     try:
         driver.get(url)

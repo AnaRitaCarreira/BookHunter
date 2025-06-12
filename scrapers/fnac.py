@@ -9,13 +9,13 @@ import time
 import chromedriver_autoinstaller
 import os
 from selenium import webdriver
+chromedriver_autoinstaller.install()  # isso baixa e coloca o chromedriver na PATH automaticamente
 
 def search_fnac(query, is_isbn=False):
     if is_isbn:
         query = query.replace("-", "").strip()
 
     chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
-    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
     options.binary_location = chrome_path
@@ -25,8 +25,7 @@ def search_fnac(query, is_isbn=False):
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
 
-    service = Service(executable_path=chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Chrome(options=options)
 
     url = f"https://www.fnac.pt/SearchResult/ResultList.aspx??SCat=2!1&SDM=list&Search={query.replace(' ', '+')}&sft=1"
     print("Abrindo URL:", url)
@@ -109,7 +108,6 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     import os
 
     chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
-    chromedriver_path = "/usr/bin/chromedriver"  # vem junto na imagem zenika
 
     options = Options()
     options.binary_location = chrome_path
@@ -118,8 +116,7 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
 
-    service = Service(executable_path=chromedriver_path)
-    driver = webdriver.Chrome(service=service, options=options)
+    driver = webdriver.Chrome(options=options)
     print("Chrome binary exists:", os.path.exists(chrome_path))
     print("Chromedriver path:", chromedriver_path)
 

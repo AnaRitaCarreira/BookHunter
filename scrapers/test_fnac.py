@@ -3,10 +3,10 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 import time
+import os
 
 def search_fnac(query):
     chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
-    chromedriver_path = "/usr/local/bin/chromedriver"
     options = Options()
     options.binary_location = chrome_path
     options.add_argument("--disable-blink-features=AutomationControlled")
