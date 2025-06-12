@@ -15,21 +15,20 @@ def search_kobo_ebooks(query, is_isbn=False):
     # Caminho para o navegador Brave e o ChromeDriver
     chromedriver_autoinstaller.install()
 
-    chrome_path = "/usr/bin/google-chrome-stable"
+    import os
+
+    chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/chromium-browser")
+    chromedriver_path = "/usr/bin/chromedriver"  # vem junto na imagem zenika
 
     options = Options()
     options.binary_location = chrome_path
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_argument("--window-size=1920,1080")
-    options.add_argument("--headless=new")  # Usar modo headless moderno
+    options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
+    options.add_argument("--disable-blink-features=AutomationControlled")
 
-    # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
-    driver = webdriver.Chrome(options=options)
-
-    import os
+    service = Service(executable_path=chromedriver_path)
+    driver = webdriver.Chrome(service=service, options=options)
     print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
 
     # Monta a URL de busca
@@ -118,19 +117,21 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
 
     chromedriver_autoinstaller.install()
 
-    chrome_path = "/usr/bin/google-chrome-stable"
+    import os
+
+    chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/chromium-browser")
+    chromedriver_path = "/usr/bin/chromedriver"  # vem junto na imagem zenika
 
     options = Options()
     options.binary_location = chrome_path
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_argument("--window-size=1920,1080")
-    options.add_argument("--headless=new")  # Usar modo headless moderno
+    options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36")
+    options.add_argument("--disable-blink-features=AutomationControlled")
 
-    # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
-    driver = webdriver.Chrome(options=options)
+    service = Service(executable_path=chromedriver_path)
+    driver = webdriver.Chrome(service=service, options=options)
+    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
 
 
     try:
