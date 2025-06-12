@@ -27,7 +27,10 @@ def search_bertrand(query, is_isbn=False):
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
-
+    import tempfile
+    # Cria um diretório temporário para o perfil do usuário, exclusivo por execução
+    user_data_dir = tempfile.mkdtemp()
+    options.add_argument(f"--user-data-dir={user_data_dir}")
 
     driver = webdriver.Chrome(options=options)    
     url = f"https://www.bertrand.pt/pesquisa/{query.replace(' ', '+')}/+/+/+/eyJ0aXBfYXJ0X3dlYl9pZCI6eyJpZCI6IjEyMiIsIm5hbWUiOiJMaXZybyJ9fQ"
@@ -98,7 +101,10 @@ def search_bertrand_ebooks(query, is_isbn=False):
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
-
+    import tempfile
+    # Cria um diretório temporário para o perfil do usuário, exclusivo por execução
+    user_data_dir = tempfile.mkdtemp()
+    options.add_argument(f"--user-data-dir={user_data_dir}")
     driver = webdriver.Chrome(options=options)
     url = f"https://www.bertrand.pt/pesquisa/{query.replace(' ', '+')}/+/+/+/eyJ0aXBfYXJ0X3dlYl9pZCI6eyJpZCI6IjYxOSIsIm5hbWUiOiJlQm9vayJ9fQ"
     print("Abrindo URL:", url)
@@ -172,7 +178,10 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
-
+    import tempfile
+    # Cria um diretório temporário para o perfil do usuário, exclusivo por execução
+    user_data_dir = tempfile.mkdtemp()
+    options.add_argument(f"--user-data-dir={user_data_dir}")
     driver = webdriver.Chrome(options=options)
     try:
         driver.get(url)
