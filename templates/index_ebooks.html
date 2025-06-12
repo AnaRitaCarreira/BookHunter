@@ -422,7 +422,7 @@ async function checkLoginAndUpdateNavbar() {
     resultsDiv.innerHTML = "";
     noResultsDiv.style.display = "none";
     loader.style.display = "block";
-    form.querySelector("button").disabled = true;
+    form.querySelector("button").disabled = false;
 
     try {
       const response = await fetch(`/search_ebooks?q=${encodeURIComponent(query)}`);
@@ -520,6 +520,7 @@ async function checkLoginAndUpdateNavbar() {
       noResultsDiv.style.display = "block";
       form.querySelector("button").disabled = false;
     }
+    form.querySelector("button").disabled = false;
   });
 </script>
 
