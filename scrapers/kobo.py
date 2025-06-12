@@ -29,6 +29,8 @@ def search_kobo_ebooks(query, is_isbn=False):
     # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
     driver = webdriver.Chrome(options=options)
 
+    import os
+    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
 
     # Monta a URL de busca
     url = f"https://www.kobo.com/pt/pt/search?query={query.replace(' ', '+')}&fclanguages=pt&pagenumber=1&fcmedia=Book"

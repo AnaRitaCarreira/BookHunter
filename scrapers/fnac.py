@@ -27,6 +27,8 @@ def search_fnac(query, is_isbn=False):
 
     # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
     driver = webdriver.Chrome(options=options)
+    import os
+    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
 
 
     url = f"https://www.fnac.pt/SearchResult/ResultList.aspx??SCat=2!1&SDM=list&Search={query.replace(' ', '+')}&sft=1"

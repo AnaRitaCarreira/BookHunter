@@ -28,6 +28,8 @@ def search_wook(query, is_isbn=False):
 
     # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
     driver = webdriver.Chrome(options=options)
+    import os
+    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
 
     # A URL de busca é a mesma para q e isbn no wook, então apenas usa o query direto
     url = f"https://www.wook.pt/pesquisa?keyword={quote(query)}&search-disposition=list&select%5Btip_art_web_id%5D=122&page=1&sort=ranking_orderSort%7Casc&interval%5Bpre_ven_cap%5D="
@@ -112,6 +114,8 @@ def search_wook_ebooks(query, is_isbn=False):
     # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
     driver = webdriver.Chrome(options=options)
 
+    import os
+    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
 
     # A URL de busca é a mesma para q e isbn no wook, então apenas usa o query direto
     url = f"https://www.wook.pt/pesquisa?keyword={quote(query)}&search-disposition=list&select[tip_art_web_id]=619&page=1&sort=ranking_orderSort|asc&interval[pre_ven_cap]="
@@ -191,6 +195,8 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
 
     # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
     driver = webdriver.Chrome(options=options)
+    import os
+    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
 
 
     try:

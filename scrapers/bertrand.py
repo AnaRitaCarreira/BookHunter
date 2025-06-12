@@ -28,6 +28,8 @@ def search_bertrand(query, is_isbn=False):
 
     # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
     driver = webdriver.Chrome(options=options)
+    import os
+    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
 
     url = f"https://www.bertrand.pt/pesquisa/{query.replace(' ', '+')}/+/+/+/eyJ0aXBfYXJ0X3dlYl9pZCI6eyJpZCI6IjEyMiIsIm5hbWUiOiJMaXZybyJ9fQ"
     print("Abrindo URL:", url)
@@ -102,6 +104,8 @@ def search_bertrand_ebooks(query, is_isbn=False):
     # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
     driver = webdriver.Chrome(options=options)
 
+    import os
+    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
 
     url = f"https://www.bertrand.pt/pesquisa/{query.replace(' ', '+')}/+/+/+/eyJ0aXBfYXJ0X3dlYl9pZCI6eyJpZCI6IjYxOSIsIm5hbWUiOiJlQm9vayJ9fQ"
     print("Abrindo URL:", url)
@@ -179,7 +183,8 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
 
     # Cria o driver (sem precisar informar o caminho do chromedriver manualmente)
     driver = webdriver.Chrome(options=options)
-
+    import os
+    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
     try:
         driver.get(url)
 
