@@ -6,6 +6,7 @@ from selenium.common.exceptions import NoSuchElementException
 import chromedriver_autoinstaller
 from urllib.parse import quote
 import time
+import os
 
 def search_bertrand(query, is_isbn=False):
     # Se for ISBN, pode tratar para evitar espaços etc.
@@ -13,12 +14,8 @@ def search_bertrand(query, is_isbn=False):
         query = query.replace("-", "").strip()
 
     # Instala automaticamente o chromedriver compatível com o Chrome
-    chromedriver_path = chromedriver_autoinstaller.install()
-
-    import os
-
-    chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/chromium-browser")
-    chromedriver_path = "/usr/bin/chromedriver"  # vem junto na imagem zenika
+    chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/google-chrome-stable")
+    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
     options.binary_location = chrome_path
@@ -26,12 +23,10 @@ def search_bertrand(query, is_isbn=False):
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--window-size=1920,1080")
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Chrome binary exists:", os.path.exists(chrome_path))
-    print("Chromedriver path:", chromedriver_path)
-
     url = f"https://www.bertrand.pt/pesquisa/{query.replace(' ', '+')}/+/+/+/eyJ0aXBfYXJ0X3dlYl9pZCI6eyJpZCI6IjEyMiIsIm5hbWUiOiJMaXZybyJ9fQ"
     print("Abrindo URL:", url)
     driver.get(url)
@@ -89,12 +84,8 @@ def search_bertrand_ebooks(query, is_isbn=False):
     if is_isbn:
         query = query.replace("-", "").strip()
 
-    chromedriver_path = chromedriver_autoinstaller.install()
-
-    import os
-
-    chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/chromium-browser")
-    chromedriver_path = "/usr/bin/chromedriver"  # vem junto na imagem zenika
+    chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
+    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
     options.binary_location = chrome_path
@@ -102,12 +93,10 @@ def search_bertrand_ebooks(query, is_isbn=False):
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--window-size=1920,1080")
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Chrome binary exists:", os.path.exists(chrome_path))
-    print("Chromedriver path:", chromedriver_path)
-
 
     url = f"https://www.bertrand.pt/pesquisa/{query.replace(' ', '+')}/+/+/+/eyJ0aXBfYXJ0X3dlYl9pZCI6eyJpZCI6IjYxOSIsIm5hbWUiOiJlQm9vayJ9fQ"
     print("Abrindo URL:", url)
@@ -170,12 +159,8 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
 
-    chromedriver_path = chromedriver_autoinstaller.install()
-
-    import os
-
-    chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/chromium-browser")
-    chromedriver_path = "/usr/bin/chromedriver"  # vem junto na imagem zenika
+    chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
+    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
     options.binary_location = chrome_path
@@ -183,11 +168,10 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--window-size=1920,1080")
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Chrome binary exists:", os.path.exists(chrome_path))
-    print("Chromedriver path:", chromedriver_path)
     try:
         driver.get(url)
 

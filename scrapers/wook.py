@@ -6,6 +6,8 @@ from selenium.common.exceptions import NoSuchElementException
 import chromedriver_autoinstaller
 from urllib.parse import quote
 import time
+import os
+from selenium import webdriver
 
 def search_wook(query, is_isbn=False):
 
@@ -13,12 +15,8 @@ def search_wook(query, is_isbn=False):
     if is_isbn:
         query = query.replace("-", "").strip()
 
-    chromedriver_path = chromedriver_autoinstaller.install()
-
-    import os
-
-    chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/chromium-browser")
-    chromedriver_path = "/usr/bin/chromedriver"  # vem junto na imagem zenika
+    chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
+    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
     options.binary_location = chrome_path
@@ -26,11 +24,10 @@ def search_wook(query, is_isbn=False):
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--window-size=1920,1080")
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Chrome binary exists:", os.path.exists(chrome_path))
-    print("Chromedriver path:", chromedriver_path)
     # A URL de busca é a mesma para q e isbn no wook, então apenas usa o query direto
     url = f"https://www.wook.pt/pesquisa?keyword={quote(query)}&search-disposition=list&select%5Btip_art_web_id%5D=122&page=1&sort=ranking_orderSort%7Casc&interval%5Bpre_ven_cap%5D="
     print("Abrindo URL:", url)
@@ -98,12 +95,8 @@ def search_wook_ebooks(query, is_isbn=False):
     if is_isbn:
         query = query.replace("-", "").strip()
 
-    chromedriver_path = chromedriver_autoinstaller.install()
-
-    import os
-
-    chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/chromium-browser")
-    chromedriver_path = "/usr/bin/chromedriver"  # vem junto na imagem zenika
+    chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
+    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
     options.binary_location = chrome_path
@@ -111,11 +104,10 @@ def search_wook_ebooks(query, is_isbn=False):
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--window-size=1920,1080")
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Chrome binary exists:", os.path.exists(chrome_path))
-    print("Chromedriver path:", chromedriver_path)
     # A URL de busca é a mesma para q e isbn no wook, então apenas usa o query direto
     url = f"https://www.wook.pt/pesquisa?keyword={quote(query)}&search-disposition=list&select[tip_art_web_id]=619&page=1&sort=ranking_orderSort|asc&interval[pre_ven_cap]="
     print("Abrindo URL:", url)
@@ -179,12 +171,8 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
 
-    chromedriver_path = chromedriver_autoinstaller.install()
-
-    import os
-
-    chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/chromium-browser")
-    chromedriver_path = "/usr/bin/chromedriver"  # vem junto na imagem zenika
+    chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
+    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
     options.binary_location = chrome_path
@@ -192,11 +180,10 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--window-size=1920,1080")
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Chrome binary exists:", os.path.exists(chrome_path))
-    print("Chromedriver path:", chromedriver_path)
     try:
         driver.get(url)
 

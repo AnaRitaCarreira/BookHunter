@@ -6,23 +6,16 @@ from selenium.common.exceptions import NoSuchElementException
 import re
 import time
 import chromedriver_autoinstaller
-
+import os
+from selenium import webdriver
 
 def search_kobo_ebooks(query, is_isbn=False):
     if is_isbn:
         query = query.replace("-", "").strip()
     query_lower = query.lower()
-    # Caminho para o navegador Brave e o ChromeDriver
-    chromedriver_autoinstaller.install()
 
-    import os
-
-    chromedriver_path = chromedriver_autoinstaller.install()
-
-    import os
-
-    chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/chromium-browser")
-    chromedriver_path = "/usr/bin/chromedriver"  # vem junto na imagem zenika
+    chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
+    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
     options.binary_location = chrome_path
@@ -30,11 +23,10 @@ def search_kobo_ebooks(query, is_isbn=False):
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--window-size=1920,1080")
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Chrome binary exists:", os.path.exists(chrome_path))
-    print("Chromedriver path:", chromedriver_path)
     # Monta a URL de busca
     url = f"https://www.kobo.com/pt/pt/search?query={query.replace(' ', '+')}&fclanguages=pt&pagenumber=1&fcmedia=Book"
     print("Abrindo URL:", url)
@@ -119,12 +111,8 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
 
-    chromedriver_path = chromedriver_autoinstaller.install()
-
-    import os
-
-    chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/chromium-browser")
-    chromedriver_path = "/usr/bin/chromedriver"  # vem junto na imagem zenika
+    chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
+    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
     options.binary_location = chrome_path
@@ -132,11 +120,10 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_argument("--window-size=1920,1080")
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Chrome binary exists:", os.path.exists(chrome_path))
-    print("Chromedriver path:", chromedriver_path)
 
     try:
         driver.get(url)

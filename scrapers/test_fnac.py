@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 import time
 
 def search_fnac(query):
-    chrome_path = "/usr/bin/google-chrome-stable"
+    chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
     chromedriver_path = "/usr/local/bin/chromedriver"
     options = Options()
     options.binary_location = chrome_path

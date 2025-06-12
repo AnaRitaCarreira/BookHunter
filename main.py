@@ -30,11 +30,6 @@ app = FastAPI()
 app.add_middleware(RedirectUnauthorizedMiddleware)
 
 
-import shutil
-print("chromium-browser:", shutil.which("chromium-browser"))
-print("chromium:", shutil.which("chromium"))
-print("chrome:", shutil.which("chrome"))
-
 # Servir arquivos estáticos (CSS, JS, imagens)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
