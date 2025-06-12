@@ -12,11 +12,11 @@ def search_bertrand(query, is_isbn=False):
     if is_isbn:
         query = query.replace("-", "").strip()
 
-    brave_path = r"C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
-    chromedriver_path = r"./chromedriver-linux64/chromedriver"
+    chrome_path = "/usr/bin/google-chrome-stable"
+    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
-    options.binary_location = brave_path
+    options.binary_location = chrome_path
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--headless")
@@ -82,11 +82,11 @@ def search_bertrand_ebooks(query, is_isbn=False):
     if is_isbn:
         query = query.replace("-", "").strip()
 
-    brave_path = r"C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
-    chromedriver_path = r"./chromedriver-linux64/chromedriver"
+    chrome_path = "/usr/bin/google-chrome-stable"
+    chromedriver_path = "/usr/local/bin/chromedriver"
 
     options = Options()
-    options.binary_location = brave_path
+    options.binary_location = chrome_path
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--headless")
@@ -156,11 +156,10 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
 
-    brave_path = r"C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
-    chromedriver_path = r"./chromedriver-linux64/chromedriver"
-
+    chrome_path = "/usr/bin/google-chrome-stable"
+    chromedriver_path = "/usr/local/bin/chromedriver"
     options = Options()
-    options.binary_location = brave_path
+    options.binary_location = chrome_path
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
     options.add_argument("--headless")

@@ -5,11 +5,10 @@ from selenium.webdriver.common.by import By
 import time
 
 def search_fnac(query):
-    brave_path = r"C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe"
-    chromedriver_path = r"./chromedriver-linux64/chromedriver"
-
+    chrome_path = "/usr/bin/google-chrome-stable"
+    chromedriver_path = "/usr/local/bin/chromedriver"
     options = Options()
-    options.binary_location = brave_path
+    options.binary_location = chrome_path
     options.add_argument("--disable-blink-features=AutomationControlled")
     options.add_argument("--window-size=1920,1080")
     #options.add_argument("--headless")
