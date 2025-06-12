@@ -29,6 +29,16 @@ class RedirectUnauthorizedMiddleware(BaseHTTPMiddleware):
 app = FastAPI()
 app.add_middleware(RedirectUnauthorizedMiddleware)
 
+import os
+print(">>> Existe o Chrome em /usr/bin/google-chrome-stable?", os.path.exists("/usr/bin/google-chrome-stable"))
+print(">>> Conteúdo de /usr/bin:")
+print(os.listdir("/usr/bin")[:50])
+
+import shutil
+print(">>> `which chrome`: ", shutil.which("chrome"))
+print(">>> `which google-chrome-stable`: ", shutil.which("google-chrome-stable"))
+print("which chromium:", shutil.which("chromium"))
+print("which chromium-browser:", shutil.which("chromium-browser"))
 
 # Servir arquivos estáticos (CSS, JS, imagens)
 app.mount("/static", StaticFiles(directory="static"), name="static")
