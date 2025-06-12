@@ -13,7 +13,7 @@ def search_wook(query, is_isbn=False):
     if is_isbn:
         query = query.replace("-", "").strip()
 
-    chromedriver_autoinstaller.install()
+    chromedriver_path = chromedriver_autoinstaller.install()
 
     import os
 
@@ -29,8 +29,8 @@ def search_wook(query, is_isbn=False):
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
-
+    print("Chrome binary exists:", os.path.exists(chrome_path))
+    print("Chromedriver path:", chromedriver_path)
     # A URL de busca é a mesma para q e isbn no wook, então apenas usa o query direto
     url = f"https://www.wook.pt/pesquisa?keyword={quote(query)}&search-disposition=list&select%5Btip_art_web_id%5D=122&page=1&sort=ranking_orderSort%7Casc&interval%5Bpre_ven_cap%5D="
     print("Abrindo URL:", url)
@@ -98,6 +98,8 @@ def search_wook_ebooks(query, is_isbn=False):
     if is_isbn:
         query = query.replace("-", "").strip()
 
+    chromedriver_path = chromedriver_autoinstaller.install()
+
     import os
 
     chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/chromium-browser")
@@ -112,8 +114,8 @@ def search_wook_ebooks(query, is_isbn=False):
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
-
+    print("Chrome binary exists:", os.path.exists(chrome_path))
+    print("Chromedriver path:", chromedriver_path)
     # A URL de busca é a mesma para q e isbn no wook, então apenas usa o query direto
     url = f"https://www.wook.pt/pesquisa?keyword={quote(query)}&search-disposition=list&select[tip_art_web_id]=619&page=1&sort=ranking_orderSort|asc&interval[pre_ven_cap]="
     print("Abrindo URL:", url)
@@ -177,7 +179,7 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
 
-    chromedriver_autoinstaller.install()
+    chromedriver_path = chromedriver_autoinstaller.install()
 
     import os
 
@@ -193,9 +195,8 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
-
-
+    print("Chrome binary exists:", os.path.exists(chrome_path))
+    print("Chromedriver path:", chromedriver_path)
     try:
         driver.get(url)
 

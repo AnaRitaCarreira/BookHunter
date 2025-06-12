@@ -17,6 +17,10 @@ def search_kobo_ebooks(query, is_isbn=False):
 
     import os
 
+    chromedriver_path = chromedriver_autoinstaller.install()
+
+    import os
+
     chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/chromium-browser")
     chromedriver_path = "/usr/bin/chromedriver"  # vem junto na imagem zenika
 
@@ -29,8 +33,8 @@ def search_kobo_ebooks(query, is_isbn=False):
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
-
+    print("Chrome binary exists:", os.path.exists(chrome_path))
+    print("Chromedriver path:", chromedriver_path)
     # Monta a URL de busca
     url = f"https://www.kobo.com/pt/pt/search?query={query.replace(' ', '+')}&fclanguages=pt&pagenumber=1&fcmedia=Book"
     print("Abrindo URL:", url)
@@ -115,7 +119,7 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
 
-    chromedriver_autoinstaller.install()
+    chromedriver_path = chromedriver_autoinstaller.install()
 
     import os
 
@@ -131,8 +135,8 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
-
+    print("Chrome binary exists:", os.path.exists(chrome_path))
+    print("Chromedriver path:", chromedriver_path)
 
     try:
         driver.get(url)

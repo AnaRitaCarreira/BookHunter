@@ -13,7 +13,7 @@ def search_bertrand(query, is_isbn=False):
         query = query.replace("-", "").strip()
 
     # Instala automaticamente o chromedriver compatível com o Chrome
-    chromedriver_autoinstaller.install()
+    chromedriver_path = chromedriver_autoinstaller.install()
 
     import os
 
@@ -29,7 +29,8 @@ def search_bertrand(query, is_isbn=False):
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
+    print("Chrome binary exists:", os.path.exists(chrome_path))
+    print("Chromedriver path:", chromedriver_path)
 
     url = f"https://www.bertrand.pt/pesquisa/{query.replace(' ', '+')}/+/+/+/eyJ0aXBfYXJ0X3dlYl9pZCI6eyJpZCI6IjEyMiIsIm5hbWUiOiJMaXZybyJ9fQ"
     print("Abrindo URL:", url)
@@ -88,7 +89,7 @@ def search_bertrand_ebooks(query, is_isbn=False):
     if is_isbn:
         query = query.replace("-", "").strip()
 
-    chromedriver_autoinstaller.install()
+    chromedriver_path = chromedriver_autoinstaller.install()
 
     import os
 
@@ -104,7 +105,9 @@ def search_bertrand_ebooks(query, is_isbn=False):
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
+    print("Chrome binary exists:", os.path.exists(chrome_path))
+    print("Chromedriver path:", chromedriver_path)
+
 
     url = f"https://www.bertrand.pt/pesquisa/{query.replace(' ', '+')}/+/+/+/eyJ0aXBfYXJ0X3dlYl9pZCI6eyJpZCI6IjYxOSIsIm5hbWUiOiJlQm9vayJ9fQ"
     print("Abrindo URL:", url)
@@ -167,7 +170,7 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
 
-    chromedriver_autoinstaller.install()
+    chromedriver_path = chromedriver_autoinstaller.install()
 
     import os
 
@@ -183,7 +186,8 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
+    print("Chrome binary exists:", os.path.exists(chrome_path))
+    print("Chromedriver path:", chromedriver_path)
     try:
         driver.get(url)
 

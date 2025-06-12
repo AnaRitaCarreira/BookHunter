@@ -12,6 +12,8 @@ def search_fnac(query, is_isbn=False):
     if is_isbn:
         query = query.replace("-", "").strip()
 
+    chromedriver_path = chromedriver_autoinstaller.install()
+
     import os
 
     chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/chromium-browser")
@@ -26,8 +28,8 @@ def search_fnac(query, is_isbn=False):
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
-
+    print("Chrome binary exists:", os.path.exists(chrome_path))
+    print("Chromedriver path:", chromedriver_path)
     url = f"https://www.fnac.pt/SearchResult/ResultList.aspx??SCat=2!1&SDM=list&Search={query.replace(' ', '+')}&sft=1"
     print("Abrindo URL:", url)
 
@@ -104,7 +106,7 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
 
-    chromedriver_autoinstaller.install()
+    chromedriver_path = chromedriver_autoinstaller.install()
 
     import os
 
@@ -120,8 +122,8 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
 
     service = Service(executable_path=chromedriver_path)
     driver = webdriver.Chrome(service=service, options=options)
-    print("Existe o Chrome?", os.path.exists("/usr/bin/google-chrome-stable"))
-
+    print("Chrome binary exists:", os.path.exists(chrome_path))
+    print("Chromedriver path:", chromedriver_path)
 
     try:
         driver.get(url)
