@@ -13,4 +13,5 @@ celery[redis]
 python-dotenv
 aiosqlite
 apscheduler
+itsdangerous
 
