@@ -9,7 +9,7 @@ import time
 import os
 from selenium import webdriver
 import shutil
-from utils import get_isolated_driver
+from scrapers.utils import get_isolated_driver
 chromedriver_autoinstaller.install()  # isso baixa e coloca o chromedriver na PATH automaticamente
 
 def search_wook(query, is_isbn=False):

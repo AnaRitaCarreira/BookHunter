@@ -10,7 +10,7 @@ import chromedriver_autoinstaller
 import os
 import shutil
 from selenium import webdriver
-from utils import get_isolated_driver
+from scrapers.utils import get_isolated_driver
 chromedriver_autoinstaller.install()  # isso baixa e coloca o chromedriver na PATH automaticamente
 
 def search_fnac(query, is_isbn=False):
