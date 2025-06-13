@@ -1,15 +1,15 @@
 import tempfile
 import shutil
 import os
-
 from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
 def get_isolated_driver():
     chrome_path = os.environ.get("CHROME_BIN", "/usr/bin/google-chrome-stable")
     options = Options()
     options.binary_location = chrome_path
-    options.add_argument("--headless")
+    options.add_argument("--headless=new")  # mais estável nas versões recentes
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
@@ -21,7 +21,11 @@ def get_isolated_driver():
     user_data_dir = tempfile.mkdtemp()
     options.add_argument(f"--user-data-dir={user_data_dir}")
 
-    driver = webdriver.Chrome(options=options)
-
-    # Retorna também o diretório para limpeza posterior
-    return driver, user_data_dir
+    try:
+        service = Service()  # usa o chromedriver do PATH
+        driver = webdriver.Chrome(service=service, options=options)
+        driver.set_page_load_timeout(30)  # limite de tempo para evitar travamentos
+        return driver, user_data_dir
+    except Exception as e:
+        shutil.rmtree(user_data_dir, ignore_errors=True)
+        raise e
