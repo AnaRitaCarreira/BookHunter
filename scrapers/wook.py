@@ -4,6 +4,7 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
 import chromedriver_autoinstaller
+from selenium.common.exceptions import WebDriverException
 from urllib.parse import quote
 import time
 import os
@@ -13,133 +14,157 @@ from scrapers.utils import get_isolated_driver
 chromedriver_autoinstaller.install()  # isso baixa e coloca o chromedriver na PATH automaticamente
 
 def search_wook(query, is_isbn=False):
-
-    # Se for ISBN, pode tratar para evitar espaços etc.
     if is_isbn:
         query = query.replace("-", "").strip()
 
-    driver, user_data_dir = get_isolated_driver()
-    # A URL de busca é a mesma para q e isbn no wook, então apenas usa o query direto
-    url = f"https://www.wook.pt/pesquisa?keyword={quote(query)}&search-disposition=list&select%5Btip_art_web_id%5D=122&page=1&sort=ranking_orderSort%7Casc&interval%5Bpre_ven_cap%5D="
-    print("Abrindo URL:", url)
-    driver.get(url)
-    
-
+    driver = None
+    user_data_dir = None
     results = []
-    items = driver.find_elements(By.CSS_SELECTOR, "li.product.d-flex")
 
-    if items:
-        for item in items[:10]:
-            try:
-                title = item.find_element(By.CSS_SELECTOR, ".title a span.font-bold").text.strip()
-                author = item.find_element(By.CSS_SELECTOR, ".authors a").text.strip().replace("de ", "")
+    try:
+        driver, user_data_dir = get_isolated_driver()
+        url = f"https://www.wook.pt/pesquisa?keyword={quote(query)}&search-disposition=list&select%5Btip_art_web_id%5D=122&page=1&sort=ranking_orderSort%7Casc"
+        print("Abrindo URL:", url)
+        driver.get(url)
 
-                # Tentativa segura de obter o preço
+        items = driver.find_elements(By.CSS_SELECTOR, "li.product.d-flex")
+
+        if items:
+            for i, item in enumerate(items[:10]):
                 try:
-                    price = item.find_element(By.CSS_SELECTOR, ".pvp-discount span.font-bold").text.strip()
-                except NoSuchElementException:
-                    price = "Indisponível"  # Ou None, ou "" dependendo da tua preferência
+                    title = item.find_element(By.CSS_SELECTOR, ".title a span.font-bold").text.strip()
+                    author = item.find_element(By.CSS_SELECTOR, ".authors a").text.strip().replace("de ", "")
 
-                link = item.find_element(By.CSS_SELECTOR, ".title a").get_attribute("href")
-                cover = item.find_element(By.CSS_SELECTOR, "a.cover img")
-                cover_url = cover.get_attribute("data-src") or cover.get_attribute("src")
+                    try:
+                        price = item.find_element(By.CSS_SELECTOR, ".pvp-discount span.font-bold").text.strip()
+                    except NoSuchElementException:
+                        price = "Indisponível"
 
-                results.append({
-                    "store": "Wook",
-                    "title": title,
-                    "author": author,
-                    "priceStr": price,
-                    "link": f"https://www.wook.pt{link}" if link.startswith("/") else link,
-                    "cover": cover_url
-                })
+                    link = item.find_element(By.CSS_SELECTOR, ".title a").get_attribute("href")
+                    cover_elem = item.find_element(By.CSS_SELECTOR, "a.cover img")
+                    cover_url = cover_elem.get_attribute("data-src") or cover_elem.get_attribute("src") or ""
 
+                    results.append({
+                        "store": "Wook",
+                        "title": title,
+                        "author": author,
+                        "priceStr": price,
+                        "link": f"https://www.wook.pt{link}" if link.startswith("/") else link,
+                        "cover": cover_url
+                    })
 
-            except Exception as e:
-                print("⚠️ Erro ao processar um item:", e)
-                print(item.get_attribute("outerHTML"))
-    else:
-        # Página única do produto
-        try:
-            title = driver.find_element(By.CSS_SELECTOR, "h1.font-medium span.title").text.strip()
-            author = driver.find_element(By.CSS_SELECTOR, "span.authors a").text.strip()
-            price = driver.find_element(By.CSS_SELECTOR, "#product-price span.price").text.strip()
-            link = driver.current_url
-            cover = driver.find_element(By.CSS_SELECTOR, ".image-container picture img").get_attribute("src")
-
-            results.append({
-                "store": "Wook",
-                "title": title,
-                "author": author,
-                "priceStr": price,
-                "link": link,
-                "cover": cover
-            })
-        except Exception as e:
-            print("⚠️ Erro ao processar página de produto único da Wook:", e)
-
-    driver.quit()
-    shutil.rmtree(user_data_dir, ignore_errors=True)
-    return results
-
-def search_wook_ebooks(query, is_isbn=False):
-
-    # Se for ISBN, pode tratar para evitar espaços etc.
-    if is_isbn:
-        query = query.replace("-", "").strip()
-
-    driver, user_data_dir = get_isolated_driver()    
-    # A URL de busca é a mesma para q e isbn no wook, então apenas usa o query direto
-    url = f"https://www.wook.pt/pesquisa?keyword={quote(query)}&search-disposition=list&select[tip_art_web_id]=619&page=1&sort=ranking_orderSort|asc&interval[pre_ven_cap]="
-    print("Abrindo URL:", url)
-    driver.get(url)
-    
-
-    results = []
-    items = driver.find_elements(By.CSS_SELECTOR, "li.product.d-flex")
-    #print("Numero de items", len(items))
-    if items:
-        # Página de lista
-        for item in items[:10]:
+                except Exception as e:
+                    print(f"⚠️ Erro ao processar item {i} da Wook:", e)
+                    # print(item.get_attribute("outerHTML"))
+        else:
+            # Página única de produto
             try:
-                title = item.find_element(By.CSS_SELECTOR, ".title a span.font-bold").text.strip()
-                author = item.find_element(By.CSS_SELECTOR, ".authors a").text.strip().replace("de ", "")
-                price = item.find_element(By.CSS_SELECTOR, ".pvp-discount span.font-bold").text.strip()
-                link = item.find_element(By.CSS_SELECTOR, ".title a").get_attribute("href")
-                cover = item.find_element(By.CSS_SELECTOR, "a.cover img").get_attribute("data-src") or \
-                        item.find_element(By.CSS_SELECTOR, "a.cover img").get_attribute("src")
-                
+                title = driver.find_element(By.CSS_SELECTOR, "h1.font-medium span.title").text.strip()
+                author = driver.find_element(By.CSS_SELECTOR, "span.authors a").text.strip()
+                price = driver.find_element(By.CSS_SELECTOR, "#product-price span.price").text.strip()
+                link = driver.current_url
+                cover = driver.find_element(By.CSS_SELECTOR, ".image-container picture img").get_attribute("src") or ""
+
                 results.append({
                     "store": "Wook",
                     "title": title,
                     "author": author,
                     "priceStr": price,
-                    "link": f"https://www.wook.pt{link}" if link.startswith("/") else link,
+                    "link": link,
                     "cover": cover
                 })
             except Exception as e:
-                print("Erro item lista:", e)
-    else:
-        # Página única do produto
-        try:
-            title = driver.find_element(By.CSS_SELECTOR, "h1.font-medium span.title").text.strip()
-            author = driver.find_element(By.CSS_SELECTOR, "span.authors a").text.strip()
-            price = driver.find_element(By.CSS_SELECTOR, "#product-price span.price").text.strip()
-            link = driver.current_url
-            cover = driver.find_element(By.CSS_SELECTOR, ".image-container picture img").get_attribute("src")
+                print("⚠️ Erro ao processar página de produto único da Wook:", e)
 
-            results.append({
-                "store": "Wook",
-                "title": title,
-                "author": author,
-                "priceStr": price,
-                "link": link,
-                "cover": cover
-            })
-        except Exception as e:
-            print("⚠️ Erro ao processar página de produto único da Wook:", e)
+    except WebDriverException as e:
+        print("Erro ao iniciar WebDriver (Wook):", e)
 
-    driver.quit()
-    shutil.rmtree(user_data_dir, ignore_errors=True)
+    finally:
+        if driver:
+            try:
+                driver.quit()
+            except:
+                pass
+        if user_data_dir:
+            shutil.rmtree(user_data_dir, ignore_errors=True)
+
+    return results
+
+def search_wook_ebooks(query, is_isbn=False):
+    if is_isbn:
+        query = query.replace("-", "").strip()
+
+    driver = None
+    user_data_dir = None
+    results = []
+
+    try:
+        driver, user_data_dir = get_isolated_driver()
+        url = f"https://www.wook.pt/pesquisa?keyword={quote(query)}&search-disposition=list&select[tip_art_web_id]=619&page=1&sort=ranking_orderSort|asc"
+        print("Abrindo URL:", url)
+        driver.get(url)
+
+        items = driver.find_elements(By.CSS_SELECTOR, "li.product.d-flex")
+
+        if items:
+            for i, item in enumerate(items[:10]):
+                try:
+                    title = item.find_element(By.CSS_SELECTOR, ".title a span.font-bold").text.strip()
+                    author = item.find_element(By.CSS_SELECTOR, ".authors a").text.strip().replace("de ", "")
+
+                    try:
+                        price = item.find_element(By.CSS_SELECTOR, ".pvp-discount span.font-bold").text.strip()
+                    except NoSuchElementException:
+                        price = "Indisponível"
+
+                    link = item.find_element(By.CSS_SELECTOR, ".title a").get_attribute("href")
+                    cover_elem = item.find_element(By.CSS_SELECTOR, "a.cover img")
+                    cover_url = cover_elem.get_attribute("data-src") or cover_elem.get_attribute("src") or ""
+
+                    results.append({
+                        "store": "Wook",
+                        "title": title,
+                        "author": author,
+                        "priceStr": price,
+                        "link": f"https://www.wook.pt{link}" if link.startswith("/") else link,
+                        "cover": cover_url
+                    })
+
+                except Exception as e:
+                    print(f"⚠️ Erro ao processar item {i} da lista Wook Ebooks:", e)
+
+        else:
+            # Página única
+            try:
+                title = driver.find_element(By.CSS_SELECTOR, "h1.font-medium span.title").text.strip()
+                author = driver.find_element(By.CSS_SELECTOR, "span.authors a").text.strip()
+                price = driver.find_element(By.CSS_SELECTOR, "#product-price span.price").text.strip()
+                link = driver.current_url
+                cover = driver.find_element(By.CSS_SELECTOR, ".image-container picture img").get_attribute("src") or ""
+
+                results.append({
+                    "store": "Wook",
+                    "title": title,
+                    "author": author,
+                    "priceStr": price,
+                    "link": link,
+                    "cover": cover
+                })
+            except Exception as e:
+                print("⚠️ Erro ao processar página de produto único (ebook Wook):", e)
+
+    except WebDriverException as e:
+        print("Erro ao iniciar WebDriver (Wook Ebooks):", e)
+
+    finally:
+        if driver:
+            try:
+                driver.quit()
+            except:
+                pass
+        if user_data_dir:
+            shutil.rmtree(user_data_dir, ignore_errors=True)
+
     return results
 
 def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:

@@ -13,122 +13,138 @@ chromedriver_autoinstaller.install()  # isso baixa e coloca o chromedriver na PA
 
 
 def search_bertrand(query, is_isbn=False):
-    # Se for ISBN, pode tratar para evitar espaços etc.
     if is_isbn:
         query = query.replace("-", "").strip()
 
-    driver, user_data_dir = get_isolated_driver()
-    url = f"https://www.bertrand.pt/pesquisa/{query.replace(' ', '+')}/+/+/+/eyJ0aXBfYXJ0X3dlYl9pZCI6eyJpZCI6IjEyMiIsIm5hbWUiOiJMaXZybyJ9fQ"
-    print("Abrindo URL:", url)
-    driver.get(url)
-    
-
+    driver = None
+    user_data_dir = None
     results = []
-    items = driver.find_elements(By.CSS_SELECTOR, "div.product-portlet")
 
+    try:
+        driver, user_data_dir = get_isolated_driver()
+        url = f"https://www.bertrand.pt/pesquisa/{query.replace(' ', '+')}/+/+/+/eyJ0aXBfYXJ0X3dlYl9pZCI6eyJpZCI6IjEyMiIsIm5hbWUiOiJMaXZybyJ9fQ"
+        print("Abrindo URL:", url)
+        driver.get(url)
 
+        items = driver.find_elements(By.CSS_SELECTOR, "div.product-portlet")
 
-    results = []
-    items = driver.find_elements(By.CSS_SELECTOR, "div.product-portlet")
-
-    for item in items[:10]:
-        try:
-            title_elem = item.find_element(By.CSS_SELECTOR, ".title-lnk")
-            title = title_elem.text
-            link = title_elem.get_attribute("href")
-            
-            author = ""
+        for i, item in enumerate(items[:10]):
             try:
-                author = item.find_element(By.CSS_SELECTOR, ".authors p a").text
+                title_elem = item.find_element(By.CSS_SELECTOR, ".title-lnk")
+                title = title_elem.text.strip()
+                link = title_elem.get_attribute("href")
+
+                try:
+                    author = item.find_element(By.CSS_SELECTOR, ".authors p a").text.strip()
+                except NoSuchElementException:
+                    author = ""
+
+                try:
+                    price = item.find_element(By.CSS_SELECTOR, ".price .active-price").text.strip()
+                except NoSuchElementException:
+                    price = "Indisponível"
+
+                try:
+                    cover_img = item.find_element(By.CSS_SELECTOR, "div.cover a picture img")
+                    cover_url = cover_img.get_attribute("src") or ""
+                except NoSuchElementException:
+                    cover_url = ""
+
+                results.append({
+                    "store": "Bertrand",
+                    "title": title,
+                    "author": author,
+                    "priceStr": price,
+                    "link": link,
+                    "cover": cover_url
+                })
+
+            except Exception as e:
+                print(f"⚠️ Erro ao extrair item {i} da Bertrand:", e)
+                # print("HTML do item:", item.get_attribute('outerHTML'))
+
+    except Exception as e:
+        print("❌ Erro ao iniciar navegação Bertrand:", e)
+
+    finally:
+        if driver:
+            try:
+                driver.quit()
             except:
                 pass
-            try:
-                price = item.find_element(By.CSS_SELECTOR, ".price .active-price").text
-            except NoSuchElementException:
-                price = "Indisponível"  # Ou None, ou "" dependendo da tua preferência
+        if user_data_dir:
+            shutil.rmtree(user_data_dir, ignore_errors=True)
 
-            cover_url = ""
-            try:
-                cover_img = item.find_element(By.CSS_SELECTOR, "div.cover a picture img")
-                cover_url = cover_img.get_attribute("src")
-            except:
-                pass
-
-            results.append({
-                "store":"Bertrand",
-                "title": title,
-                "author": author,
-                "priceStr": price,
-                "link": link,
-                "cover": cover_url
-            })
-        except Exception as e:
-            print("Erro ao extrair item:", e)
-            #print("HTML do item:", item.get_attribute('outerHTML'))
-
-    driver.quit()
-    shutil.rmtree(user_data_dir, ignore_errors=True)
     return results
 
 
 def search_bertrand_ebooks(query, is_isbn=False):
-    # Se for ISBN, pode tratar para evitar espaços etc.
     if is_isbn:
         query = query.replace("-", "").strip()
 
-    driver, user_data_dir = get_isolated_driver()
-    url = f"https://www.bertrand.pt/pesquisa/{query.replace(' ', '+')}/+/+/+/eyJ0aXBfYXJ0X3dlYl9pZCI6eyJpZCI6IjYxOSIsIm5hbWUiOiJlQm9vayJ9fQ"
-    print("Abrindo URL:", url)
-    driver.get(url)
-    
-
+    driver = None
+    user_data_dir = None
     results = []
-    items = driver.find_elements(By.CSS_SELECTOR, "div.product-portlet")
 
+    try:
+        driver, user_data_dir = get_isolated_driver()
+        url = (
+            "https://www.bertrand.pt/pesquisa/"
+            f"{query.replace(' ', '+')}/+/+/+/"
+            "eyJ0aXBfYXJ0X3dlYl9pZCI6eyJpZCI6IjYxOSIsIm5hbWUiOiJlQm9vayJ9fQ"
+        )
+        print("Abrindo URL:", url)
+        driver.get(url)
 
+        items = driver.find_elements(By.CSS_SELECTOR, "div.product-portlet")
 
-    results = []
-    items = driver.find_elements(By.CSS_SELECTOR, "div.product-portlet")
-
-    for item in items[:10]:
-        try:
-            title_elem = item.find_element(By.CSS_SELECTOR, ".title-lnk")
-            title = title_elem.text
-            link = title_elem.get_attribute("href")
-            
-            author = ""
+        for i, item in enumerate(items[:10]):
             try:
-                author = item.find_element(By.CSS_SELECTOR, ".authors p a").text
+                title_elem = item.find_element(By.CSS_SELECTOR, ".title-lnk")
+                title = title_elem.text.strip()
+                link = title_elem.get_attribute("href")
+
+                try:
+                    author = item.find_element(By.CSS_SELECTOR, ".authors p a").text.strip()
+                except NoSuchElementException:
+                    author = ""
+
+                try:
+                    price = item.find_element(By.CSS_SELECTOR, ".price .active-price").text.strip()
+                except NoSuchElementException:
+                    price = "Indisponível"
+
+                try:
+                    cover_img = item.find_element(By.CSS_SELECTOR, "div.cover a picture img")
+                    cover_url = cover_img.get_attribute("src") or ""
+                except NoSuchElementException:
+                    cover_url = ""
+
+                results.append({
+                    "store": "Bertrand",
+                    "title": title,
+                    "author": author,
+                    "priceStr": price,
+                    "link": link,
+                    "cover": cover_url
+                })
+
+            except Exception as e:
+                print(f"⚠️ Erro ao extrair item {i} da Bertrand eBooks:", e)
+
+    except Exception as e:
+        print("❌ Erro ao iniciar navegação Bertrand eBooks:", e)
+
+    finally:
+        if driver:
+            try:
+                driver.quit()
             except:
                 pass
-            try:
-                price = item.find_element(By.CSS_SELECTOR, ".price .active-price").text
-            except NoSuchElementException:
-                price = "Indisponível"  # Ou None, ou "" dependendo da tua preferência
+        if user_data_dir:
+            shutil.rmtree(user_data_dir, ignore_errors=True)
 
-            cover_url = ""
-            try:
-                cover_img = item.find_element(By.CSS_SELECTOR, "div.cover a picture img")
-                cover_url = cover_img.get_attribute("src")
-            except:
-                pass
-
-            results.append({
-                "store":"Bertrand",
-                "title": title,
-                "author": author,
-                "priceStr": price,
-                "link": link,
-                "cover": cover_url
-            })
-        except Exception as e:
-            print("Erro ao extrair item:", e)
-            #print("HTML do item:", item.get_attribute('outerHTML'))
-
-    driver.quit()
-    shutil.rmtree(user_data_dir, ignore_errors=True)
     return results
-
 def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     """
     Abre diretamente a página do produto (livro físico ou ebook) e extrai o preço atual.

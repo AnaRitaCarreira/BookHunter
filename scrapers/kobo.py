@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import WebDriverException
 import re
 import time
 import chromedriver_autoinstaller
@@ -17,80 +18,70 @@ def search_kobo_ebooks(query, is_isbn=False):
         query = query.replace("-", "").strip()
     query_lower = query.lower()
 
+    results = []
     driver, user_data_dir = get_isolated_driver()
-    # Monta a URL de busca
-    url = f"https://www.kobo.com/pt/pt/search?query={query.replace(' ', '+')}&fclanguages=pt&pagenumber=1&fcmedia=Book"
+    url = (
+        f"https://www.kobo.com/pt/pt/search?"
+        f"query={query.replace(' ', '+')}&fclanguages=pt&pagenumber=1&fcmedia=Book"
+    )
     print("Abrindo URL:", url)
     driver.get(url)
 
-    time.sleep(3)  # Aguarda carregar os resultados, aumente se necessário
-
-    results = []
+    time.sleep(3)  # Ajuste conforme necessário
 
     try:
-        # Localiza os itens da busca
         items = driver.find_elements(By.CSS_SELECTOR, 'div[data-testid="search-results-items"] > div[role="listitem"]')
 
-        for item in items[:10]:  # Limita aos primeiros 10 resultados
-
-            # Procurar TÍTULO
-            title = None
+        for i, item in enumerate(items[:10]):
             try:
                 title_elem = item.find_element(By.CSS_SELECTOR, '[data-testid="title"] .link--label')
-                title = title_elem.text.strip()
-                if not title:
-                    title = title_elem.get_attribute("textContent").strip()
-            except Exception as e:
-                print("Erro ao extrair título:", e)
+                title = title_elem.text.strip() or title_elem.get_attribute("textContent").strip()
 
-            # Procurar AUTOR
-            author = None
-            try:
                 author_elem = item.find_element(By.CSS_SELECTOR, '[data-testid="authors"] .link--label')
-                author = author_elem.text.strip()
-                if not author:
-                    author = author_elem.get_attribute("textContent").strip()
+                author = author_elem.text.strip() or author_elem.get_attribute("textContent").strip()
+
+                # Preço (procura pelo span com data-testid correto)
+                raw_price = "Indisponível"
+                price_spans = item.find_elements(By.CSS_SELECTOR, 'span')
+                for sp in price_spans:
+                    data_testid = sp.get_attribute('data-testid')
+                    if data_testid and data_testid.endswith('-pricing-price-value'):
+                        raw_price = sp.text.strip()
+                        break  # usa o primeiro encontrado
+
+                # Filtro: ignora se não encontrar a query no título ou autor
+                if query_lower not in title.lower() and query_lower not in author.lower():
+                    continue
+
+                link = title_elem.get_attribute("href")
+
+                try:
+                    cover_elem = item.find_element(By.CSS_SELECTOR, 'div[data-testid="book-cover-container"] img')
+                    cover_url = cover_elem.get_attribute("src")
+                except NoSuchElementException:
+                    cover_url = ""
+
+                results.append({
+                    "store": "Kobo",
+                    "title": title,
+                    "author": author,
+                    "priceStr": raw_price,
+                    "link": link,
+                    "cover": cover_url
+                })
+
             except Exception as e:
-                print("Erro ao extrair autor:", e)
-            
-
-            # Preço
-            price_spans = item.find_elements(By.CSS_SELECTOR, 'span')
-            for sp in price_spans:
-                data_testid = sp.get_attribute('data-testid')
-                if data_testid and data_testid.endswith('-pricing-price-value'):
-                    raw_price = sp.text.strip()
-                    #print(f"Preço encontrado no item: {raw_price}")
-            # Filtro simples para conter a query no título ou autor
-            if query_lower not in title.lower() and query_lower not in author.lower():
-                continue
-
-            link = item.find_element(By.CSS_SELECTOR, 'a[data-testid="title"]').get_attribute("href")
-            cover_url = item.find_element(By.CSS_SELECTOR, 'div[data-testid="book-cover-container"] img').get_attribute("src")
-
-            # Capa
-            try:
-                cover_elem = item.find_element(By.CSS_SELECTOR, 'div[data-testid="book-cover-container"] img')
-                cover_url = cover_elem.get_attribute("src")
-            except NoSuchElementException:
-                cover_url = ""
-
-            results.append({
-                "store": "Kobo",
-                "title": title,
-                "author": author,
-                "priceStr": raw_price,
-                "link": link,
-                "cover": cover_url
-            })
-
+                print(f"⚠️ Erro ao processar item {i} da Kobo:", e)
 
     except Exception as e:
-        print("Erro geral ao buscar resultados:", e)
+        print("❌ Erro ao buscar resultados da Kobo:", e)
 
-    driver.quit()
-    shutil.rmtree(user_data_dir, ignore_errors=True)
+    finally:
+        driver.quit()
+        shutil.rmtree(user_data_dir, ignore_errors=True)
+
     return results
+
 
 
 def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
