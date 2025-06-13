@@ -8,6 +8,7 @@ from selenium.webdriver.support import expected_conditions as EC
 import time
 import chromedriver_autoinstaller
 import os
+import shutil
 from selenium import webdriver
 from utils import get_isolated_driver
 chromedriver_autoinstaller.install()  # isso baixa e coloca o chromedriver na PATH automaticamente

@@ -7,6 +7,7 @@ import chromedriver_autoinstaller
 from urllib.parse import quote
 import time
 import os
+import shutil
 from utils import get_isolated_driver
 chromedriver_autoinstaller.install()  # isso baixa e coloca o chromedriver na PATH automaticamente
 
