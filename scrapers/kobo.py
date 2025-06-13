@@ -8,6 +8,7 @@ import time
 import chromedriver_autoinstaller
 import os
 from selenium import webdriver
+from utils import get_isolated_driver
 chromedriver_autoinstaller.install()  # isso baixa e coloca o chromedriver na PATH automaticamente
 
 def search_kobo_ebooks(query, is_isbn=False):
@@ -15,23 +16,7 @@ def search_kobo_ebooks(query, is_isbn=False):
         query = query.replace("-", "").strip()
     query_lower = query.lower()
 
-    chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
-
-    options = Options()
-    options.binary_location = chrome_path
-    options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_argument("--window-size=1920,1080")
-    options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
-    import tempfile
-    # Cria um diretório temporário para o perfil do usuário, exclusivo por execução
-    user_data_dir = tempfile.mkdtemp()
-    options.add_argument(f"--user-data-dir={user_data_dir}")
-
-    driver = webdriver.Chrome(options=options)
+    driver, user_data_dir = get_isolated_driver()
     # Monta a URL de busca
     url = f"https://www.kobo.com/pt/pt/search?query={query.replace(' ', '+')}&fclanguages=pt&pagenumber=1&fcmedia=Book"
     print("Abrindo URL:", url)
@@ -103,6 +88,7 @@ def search_kobo_ebooks(query, is_isbn=False):
         print("Erro geral ao buscar resultados:", e)
 
     driver.quit()
+    shutil.rmtree(user_data_dir, ignore_errors=True)
     return results
 
 
@@ -116,24 +102,7 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
 
-    chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
-
-    options = Options()
-    options.binary_location = chrome_path
-    options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_argument("--window-size=1920,1080")
-    options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
-    import tempfile
-    # Cria um diretório temporário para o perfil do usuário, exclusivo por execução
-    user_data_dir = tempfile.mkdtemp()
-    options.add_argument(f"--user-data-dir={user_data_dir}")
-    
-    driver = webdriver.Chrome(options=options)    
-
+    driver, user_data_dir = get_isolated_driver()
     try:
         driver.get(url)
 
@@ -158,6 +127,7 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
 
     finally:
         driver.quit()
+        shutil.rmtree(user_data_dir, ignore_errors=True)
 
 
 # Teste isolado

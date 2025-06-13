@@ -37,6 +37,7 @@ def search_fnac(query):
         print(f"Erro no item 0: {e}")
 
     driver.quit()
+    shutil.rmtree(user_data_dir, ignore_errors=True)
 
 
 if __name__ == "__main__":

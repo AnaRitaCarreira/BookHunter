@@ -9,29 +9,14 @@ import time
 import chromedriver_autoinstaller
 import os
 from selenium import webdriver
+from utils import get_isolated_driver
 chromedriver_autoinstaller.install()  # isso baixa e coloca o chromedriver na PATH automaticamente
 
 def search_fnac(query, is_isbn=False):
     if is_isbn:
         query = query.replace("-", "").strip()
 
-    chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
-
-    options = Options()
-    options.binary_location = chrome_path
-    options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_argument("--window-size=1920,1080")
-    options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
-    import tempfile
-    # Cria um diretório temporário para o perfil do usuário, exclusivo por execução
-    user_data_dir = tempfile.mkdtemp()
-    options.add_argument(f"--user-data-dir={user_data_dir}")
-
-    driver = webdriver.Chrome(options=options)
+    driver, user_data_dir = get_isolated_driver()
 
     url = f"https://www.fnac.pt/SearchResult/ResultList.aspx??SCat=2!1&SDM=list&Search={query.replace(' ', '+')}&sft=1"
     print("Abrindo URL:", url)
@@ -44,6 +29,7 @@ def search_fnac(query, is_isbn=False):
     except TimeoutException:
         print("Timeout esperando os artigos carregarem")
         driver.quit()
+        shutil.rmtree(user_data_dir, ignore_errors=True)
         return []
 
     results = []
@@ -97,6 +83,7 @@ def search_fnac(query, is_isbn=False):
     #print(f"--- Item {0} --- OK")
 
     driver.quit()
+    shutil.rmtree(user_data_dir, ignore_errors=True)
     return results
 
 def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
@@ -109,28 +96,7 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
 
-    chromedriver_path = chromedriver_autoinstaller.install()
-
-    import os
-
-    chrome_path = os.environ.get("CHROME_BIN", "/opt/render/project/.render/chrome/opt/google/chrome/google-chrome")
-
-    options = Options()
-    options.binary_location = chrome_path
-    options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--disable-blink-features=AutomationControlled")
-    options.add_argument("--user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36")
-    import tempfile
-    # Cria um diretório temporário para o perfil do usuário, exclusivo por execução
-    user_data_dir = tempfile.mkdtemp()
-    options.add_argument(f"--user-data-dir={user_data_dir}")
-    
-    driver = webdriver.Chrome(options=options)
-    print("Chrome binary exists:", os.path.exists(chrome_path))
-    print("Chromedriver path:", chromedriver_path)
+    driver, user_data_dir = get_isolated_driver()
 
     try:
         driver.get(url)
@@ -152,6 +118,7 @@ def get_price_from_url(url: str, is_ebook: bool = False) -> float | None:
 
     finally:
         driver.quit()
+        shutil.rmtree(user_data_dir, ignore_errors=True)
 
 
 # Teste
